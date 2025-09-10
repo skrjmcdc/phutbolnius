@@ -61,6 +61,9 @@ python3 manage.py migrate
 </html>
 ```
 - Kemudian saya mulai mengerjakan mekanisme routing agar pengguna dapat mengakses halaman utama.
+  - Saya membuat fungsi `show_main_page` di file `views.py` pada aplikasi `main`. Fungsi ini bertugas mem-format file `index.html` ke dalam bentuk response HTTP.
+  - Selanjutnya, saya membuat daftar pola URL yang akan di-cek di file `urls.py` aplikasi `main`. Saat ini satu-satunya anggotanya adalah root URL, yang akan memanggil fungsi `show_main_page` pada file `views.py`.
+  - Terakhir, saya meng-include daftar pola URL pada file `urls.py` aplikasi `main` di file `urls.py` proyek.
 - Saya kembali melakukan `runserver`, namun ternyata muncul error: <https://drive.google.com/file/d/1V7ombRweWjwVZoDyhrz4ryPhePNqlSwe/view>
 - Setelah saya telusuri, ternyata masalahnya adalah saya belum menambahkan `main` ke dalam list `INSTALLED_APPS` di file proyek `settings.py`. Setelah saya tambahkan `main` ke dalam list `INSTALLED_APPS`, akhirnya halaman utama dapat ditampilkan.
 - Setelah itu, saya menambahkan model `Product` di file `models.py`, lalu saya melakukan migrasi database agar model tersebut terekam oleh Django.
