@@ -34,6 +34,9 @@ DEBUG = not PRODUCTION
 
 ALLOWED_HOSTS = ['localhost', 'muhammad-ibaadi-phutbolnius.pbp.cs.ui.ac.id']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://muhammad-ibaadi-phutbolnius.pbp.cs.ui.ac.id',
+]
 
 # Application definition
 
@@ -62,7 +65,7 @@ ROOT_URLCONF = 'phutbolnius.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
