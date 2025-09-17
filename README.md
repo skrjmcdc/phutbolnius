@@ -302,12 +302,31 @@ urlpatterns = [
     ...
 ]
 ```
-## Mengapa *data delivery* diperlukan
+## Mengapa *data delivery* diperlukan dalam pengimplementasian sebuah platform
+
+Secara konseptual Internet dan World Wide Web berfungsi sebagai jaringan transfer data raksasa, jadi *data delivery* sudah pasti penting.
 
 ## XML vs. JSON
 
+Secara pribadi saya lebih menyukai XML karena syntax-nya lebih kaku, dan lebih aman dibandingkan JSON.
+
+Menurut saya alasan JSON lebih popular adalah karena JSON meniru syntax JavaScript (sesuai namanya), yang mana JavaScript adalah salah satu programming language paling popular dalam pengembangan web.
+
 ## Fungsi dari method `is_valid()` pada form Django
+
+Sesuai namanya, method `is_valid()` akan memvalidasi input form yang diterima oleh server. Fungsi ini penting karena bisa saja pengguna secara sengaja maupun tidak disengaja mengirimkan data yang tidak sesuai constraint, yang dapat menyebabkan kerusakan data atau kebobolan.
 
 ## Mengapa `csrf_token` dibutuhkan
 
-## Feedback asdos
+Tag `csrf_token` dalam template Django merupakan bagian dari sistem proteksi Django terhadap serangan *Cross Site Request Forgery* (CSRF). CSRF token berfungsi untuk memastikan bahwa pengguna memang mengakses website yang benar. Tanpa adanya `csrf_token`, penyerang bisa saja membuat website yang seolah menyerupai website asli dan memanfaatkan kredensial pengguna untuk membuat pengguna melakukan hal yang tidak diinginkan.
+
+## Feedback Asdos
+
+-
+
+## Screenshot Postman
+
+XML: <https://drive.google.com/file/d/11PDK46HPgUw6iGfzcFhNJ_faf4-kr5Ur/view>
+XML *by ID*: <https://drive.google.com/file/d/1-Ab8z-JmT5ueWasiHxtpZNBPWR4JyK90/view>
+JSON: <https://drive.google.com/file/d/1_II7N-dgsKAi1QxQBn_msp5GtgLMwPHo/view>
+JSON *by ID*: <https://drive.google.com/file/d/1OwDZKNc8PigSeNX9fMCzcTPzfpJ7nJtt/view>
