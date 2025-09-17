@@ -128,7 +128,7 @@ urlpatterns = [
 
 ### XML dan JSON
 
-Sekarang saya sudah memilki form untuk menambahkan produk, namun belum ada cara untuk melihat produk..
+Sekarang saya sudah memilki form untuk menambahkan produk, namun belum ada cara untuk melihat produk.
 
 Oleh karena itu, selanjutnya saya mengimplementasi *data delivery* dalam format XML.
 
@@ -173,8 +173,8 @@ Kemudian saya melakukan routing:
 
 urlpatterns = [
     ...
-    path('json/', show_json, name='show_json'),
-    path('json/<str:product_id>', show_json_by_id, name='show_json_by_id'),
+    path('xml/', show_xml, name='show_xml'),
+    path('xml/<str:product_id>', show_xml_by_id, name='show_xml_by_id'),
 ]
 ```
 
@@ -204,8 +204,8 @@ def show_json_by_id(request, product_id):
 
 urlpatterns = [
     ...
-    path('xml/', show_xml, name='show_xml'),
-    path('xml/<str:product_id>', show_xml_by_id, name='show_xml_by_id'),
+    path('json/', show_json, name='show_json'),
+    path('json/<str:product_id>', show_json_by_id, name='show_json_by_id'),
 ]
 ```
 
@@ -252,7 +252,7 @@ def show_main_page(request):
 ```
 
 Selanjutnya saya mengimplementasi halaman untuk melihat detail masing-masing produk. Untuk itu saya membuat template baru di `main/templates/view_product.html`:
-```
+```html
 {% extends 'base.html' %}
 {% block content %}
 
@@ -301,6 +301,23 @@ urlpatterns = [
     path('product/<str:id>/', view_product, name="view_product"),
     ...
 ]
+```
+Terakhir, saya juga sedikit memodifikasi halaman utama agar nama setiap produk menjadi link menuju halaman detail produk tersebut:
+```html
+...
+
+{% for product in products %}
+
+<tr>
+    <td><a href="{% url 'main:view_product' product.id %}">
+            <span class="bold">{{ product.name }}</span>
+        </a></td>
+    <td><span class="bold">{{ product.price }}</span></td>
+</tr>
+
+{% endfor %}
+
+...
 ```
 ## Mengapa *data delivery* diperlukan dalam pengimplementasian sebuah platform
 
