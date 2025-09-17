@@ -128,7 +128,7 @@ urlpatterns = [
 
 ### XML dan JSON
 
-Sekarang saya sudah memilki form untuk menambahkan produk, namun belum ada cara untuk melihat produk.
+Sekarang saya sudah memilki form untuk menambahkan produk, namun belum ada cara untuk melihat produk..
 
 Oleh karena itu, selanjutnya saya mengimplementasi *data delivery* dalam format XML.
 
