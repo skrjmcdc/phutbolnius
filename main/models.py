@@ -3,7 +3,7 @@ from django.db import models
 
 # Create your models here.
 
-class Product2(models.Model):
+class Product(models.Model):
 
     CATEGORY_CHOICES = [
         ('misc', 'Lain-Lain')
