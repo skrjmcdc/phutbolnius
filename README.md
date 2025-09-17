@@ -347,6 +347,7 @@ XML: <https://drive.google.com/file/d/11PDK46HPgUw6iGfzcFhNJ_faf4-kr5Ur/view>
 XML *by ID*: <https://drive.google.com/file/d/1-Ab8z-JmT5ueWasiHxtpZNBPWR4JyK90/view>
 JSON: <https://drive.google.com/file/d/1_II7N-dgsKAi1QxQBn_msp5GtgLMwPHo/view>
 JSON *by ID*: <https://drive.google.com/file/d/1OwDZKNc8PigSeNX9fMCzcTPzfpJ7nJtt/view>
+
 # Tugas 2
 
 ## Step-by-step checklist
