@@ -6,7 +6,7 @@ from main.views import \
 app_name = 'main'
 
 urlpatterns = [
-    path('', show_main_page),
+    path('', show_main_page, name="show_main_page"),
     path('add_product/', add_product, name='add_product'),
     path('xml/', show_xml, name='show_xml'),
     path('xml/<str:product_id>', show_xml_by_id, name='show_xml_by_id'),
