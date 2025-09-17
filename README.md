@@ -209,6 +209,48 @@ urlpatterns = [
 ]
 ```
 
+### Detail produk
+
+Sekarang kita punya cara mengakses data produk, namun masih belum bersifat visual.
+
+Oleh karena itu, sekarang kita akan mengimplementasi penampilan data produk dalam web page.
+
+Saya mengedit halaman utama agar menampilkan nama dan harga setiap produk:
+
+```html
+...
+
+<table>
+{% for product in products %}
+
+<tr>
+    <td><span class="bold">{{ product.name }}</span></td>
+    <td><span class="bold">{{ product.price }}</span></td>
+</tr>
+
+{% endfor %}
+</table>
+
+...
+```
+```py
+...
+
+def show_main_page(request):
+
+    products = Product.objects.all()
+
+    context = {
+        'name': 'Muhammad Ibaadi Ilmi',
+        'class': 'PBP A',
+        'products': products,
+    }
+
+    return render(request, "index.html", context)
+
+...
+```
+
 ## Mengapa *data delivery* diperlukan
 
 ## XML vs. JSON

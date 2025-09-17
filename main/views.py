@@ -7,10 +7,15 @@ from main.models import Product
 # Create your views here.
 
 def show_main_page(request):
+
+    products = Product.objects.all()
+
     context = {
-        'name'  : 'Muhammad Ibaadi Ilmi',
-        'class' : 'PBP A',
+        'name': 'Muhammad Ibaadi Ilmi',
+        'class': 'PBP A',
+        'products': products,
     }
+
     return render(request, "index.html", context)
 
 def add_product(request):

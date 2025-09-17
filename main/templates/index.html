@@ -12,4 +12,15 @@
 
 <hr />
 
+<table>
+{% for product in products %}
+
+<tr>
+    <td><span class="bold">{{ product.name }}</span></td>
+    <td><span class="bold">{{ product.price }}</span></td>
+</tr>
+
+{% endfor %}
+</table>
+
 {% endblock content %}
