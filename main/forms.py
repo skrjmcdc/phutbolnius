@@ -1,9 +1,9 @@
 from django.forms import ModelForm
-from main.models import Product
+from main.models import Product2
 
-class ProductForm(ModelForm):
+class Product2Form(ModelForm):
     class Meta:
-        model = Product
+        model = Product2
         fields = [
             "name",
             "price",
