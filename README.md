@@ -251,6 +251,57 @@ def show_main_page(request):
 ...
 ```
 
+Selanjutnya saya mengimplementasi halaman untuk melihat detail masing-masing produk. Untuk itu saya membuat template baru di `main/templates/view_product.html`:
+```
+{% extends 'base.html' %}
+{% block content %}
+
+<p><a href="{% url 'main:show_main_page' %}">Kembali ke halaman utama</a></p>
+
+<h1>{{ product.name }}</h1>
+
+<p><span class="bold">Kategori: </span>{{ product.category }}</p>
+
+<p><span class="bold">Harga: </span>{{ product.price }}</p>
+
+<p>{{ product.description }}</p>
+
+{% endblock content %}
+```
+Implementasi view:
+```py
+from django.shortcuts import render, redirect, get_object_or_404
+...
+
+...
+
+def view_product(request, id):
+
+    product = get_object_or_404(Product, pk=id)
+    
+    context = {
+        'product': product,
+    }
+
+    return render(request, "view_product.html", context)
+
+...
+```
+Routing:
+```py
+from django.urls import path
+from main.views import \
+        show_main_page, view_product, add_product, \
+        show_xml, show_xml_by_id, show_json, show_json_by_id
+
+app_name = 'main'
+
+urlpatterns = [
+    ...
+    path('product/<str:id>/', view_product, name="view_product"),
+    ...
+]
+```
 ## Mengapa *data delivery* diperlukan
 
 ## XML vs. JSON

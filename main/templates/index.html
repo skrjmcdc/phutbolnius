@@ -16,7 +16,9 @@
 {% for product in products %}
 
 <tr>
-    <td><span class="bold">{{ product.name }}</span></td>
+    <td><a href="{% url 'main:view_product' product.id %}">
+            <span class="bold">{{ product.name }}</span>
+        </a></td>
     <td><span class="bold">{{ product.price }}</span></td>
 </tr>
 

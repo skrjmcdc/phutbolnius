@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.core import serializers
 from main.forms import ProductForm
@@ -17,6 +17,16 @@ def show_main_page(request):
     }
 
     return render(request, "index.html", context)
+
+def view_product(request, id):
+
+    product = get_object_or_404(Product, pk=id)
+    
+    context = {
+        'product': product,
+    }
+
+    return render(request, "view_product.html", context)
 
 def add_product(request):
 
