@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.core import serializers
+from django.contrib.auth.forms import UserCreationForm
+
 from main.forms import ProductForm
 from main.models import Product
 
@@ -70,3 +72,15 @@ def show_json_by_id(request, product_id):
         return HttpResponse(json_data, content_type="application/json")
     except Product.DoesNotExist:
         return HttpResponse(status=404)
+
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('main:show_main_page')
+
+    context = { 'form': form }
+    return render(request, 'register.html', context)
