@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
 from django.urls import reverse
 
 from main.forms import ProductForm
@@ -27,20 +29,27 @@ def show_main_page(request):
 def view_product(request, id):
 
     product = get_object_or_404(Product, pk=id)
+
+    print("Halo")
+    seller_name = product.user.username or "Halo Dunia Football Shop"
     
     context = {
         'product': product,
+        'seller_name': seller_name,
     }
 
     return render(request, "view_product.html", context)
 
+@login_required(login_url='/login')
 def add_product(request):
 
     form = ProductForm(request.POST or None)
 
     # Form submission
     if form.is_valid() and request.method == "POST":
-        form.save()
+        product = form.save(commit=False)
+        product.user = request.user
+        product.save()
         return redirect('main:show_main_page')
 
     # Form filling out
