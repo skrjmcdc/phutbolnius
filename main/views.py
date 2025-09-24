@@ -18,6 +18,7 @@ def show_main_page(request):
         'name': 'Muhammad Ibaadi Ilmi',
         'class': 'PBP A',
         'products': products,
+        'username': request.user.username,
     }
 
     return render(request, "index.html", context)
