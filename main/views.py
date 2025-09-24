@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.urls import reverse
 
 from main.forms import ProductForm
 from main.models import Product
@@ -84,3 +86,19 @@ def register(request):
 
     context = { 'form': form }
     return render(request, 'register.html', context)
+
+def login_user(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return HttpResponseRedirect(reverse("main:show_main_page"))
+    else:
+        form = AuthenticationForm(request)
+    context = { 'form': form }
+    return render(request, 'login.html', context)
+
+def logout_user(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('main:show_main_page'))
