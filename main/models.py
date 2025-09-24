@@ -6,7 +6,11 @@ from django.db import models
 class Product(models.Model):
 
     CATEGORY_CHOICES = [
-        ('misc', 'Lain-Lain')
+        ('consumable', 'Konsumsi'),
+        ('equipment', 'Perlengkapan'),
+        ('tool', 'Alat'),
+        ('treasure', 'Barang Berharga'),
+        ('misc', 'Lain-Lain'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
