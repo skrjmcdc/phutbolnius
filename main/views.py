@@ -1,3 +1,6 @@
+import datetime
+import locale
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
@@ -10,6 +13,8 @@ from django.urls import reverse
 from main.forms import ProductForm
 from main.models import Product
 
+locale.setlocale(locale.LC_ALL, "id_ID.UTF-8")
+
 # Create your views here.
 
 def show_main_page(request):
@@ -21,7 +26,8 @@ def show_main_page(request):
         'class': 'PBP A',
         'products': products,
         'username': request.user.username,
-        'is_authenticated': request.user.is_authenticated
+        'is_authenticated': request.user.is_authenticated,
+        'last_login': request.COOKIES.get('last_login', 'Belum Pernah'),
     }
 
     return render(request, "index.html", context)
@@ -104,7 +110,11 @@ def login_user(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return HttpResponseRedirect(reverse("main:show_main_page"))
+            response = HttpResponseRedirect(reverse("main:show_main_page"))
+            response.set_cookie('last_login', 
+                                datetime.datetime.now()
+                                .strftime("%A, %d %B %Y, %H:%M:%S.%f"))
+            return response
     else:
         form = AuthenticationForm(request)
     context = { 'form': form }
@@ -112,4 +122,6 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
-    return HttpResponseRedirect(reverse('main:show_main_page'))
+    response = HttpResponseRedirect(reverse('main:show_main_page'))
+    response.delete_cookie('last_login')
+    return response
