@@ -62,6 +62,24 @@ def add_product(request):
     context = {'form': form}
     return render(request, "add_product.html", context)
 
+@login_required(login_url='/login')
+def edit_product(request, id):
+
+    product = get_object_or_404(Product, pk=id)
+    if request.user.id != product.user.id:
+        return HttpResponse(status=403)
+
+    form = ProductForm(request.POST or None, instance=product)
+
+    # Form submission
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return redirect('main:show_main_page')
+
+    # Form filling out
+    context = {'form': form}
+    return render(request, "edit_product.html", context)
+
 def show_xml(request):
 
     products = Product.objects.all()
