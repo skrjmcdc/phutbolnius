@@ -12,7 +12,7 @@
 
 Pertama saya membuat view baru untuk registrasi user.
 
-(File: `main/templates/.html`)
+(File: `main/templates/register.html` **(file baru)**)
 ```html
 {% extends 'base.html' %}
 
@@ -37,7 +37,8 @@ Pertama saya membuat view baru untuk registrasi user.
 ...
 from django.contrib.auth.forms import UserCreationForm
 ...
-
+```
+```
 ...
 
 def register(request):
@@ -55,7 +56,7 @@ def register(request):
 
 Selanjutnya saya membuat view untuk login.
 
-(File: `main/templates/login.html`)
+(File: `main/templates/login.html` **(file baru)**)
 ```html
 {% extends 'base.html' %}
 
@@ -85,8 +86,11 @@ Selanjutnya saya membuat view untuk login.
 ```
 (File: `main/views.py`)
 ```py
+...
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-
+...
+```
+```
 ...
 
 def login_user(request):
@@ -102,7 +106,17 @@ def login_user(request):
     return render(request, 'login.html', context)
 ```
 
-Kemudian saya melakukan routing untuk semua views telah yang saya buat.
+Terakhir, saya membuat mekanisme logout.
+(File: `main/views.py`)
+```py
+...
+
+def logout_user(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('main:show_main_page'))
+```
+
+Saya juga tidak lupa melakukan routing untuk semua views telah yang saya buat.
 (File: `main/urls.py`)
 ```py
 from django.urls import path
@@ -205,6 +219,8 @@ import datetime
 
 ```
 ```py
+...
+
 def login_user(request):
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
@@ -220,6 +236,17 @@ def login_user(request):
         form = AuthenticationForm(request)
     context = { 'form': form }
     return render(request, 'login.html', context)
+
+...
+```
+```py
+...
+
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:show_main_page'))
+    response.delete_cookie('last_login')
+    return response
 ```
 
 Kemudian saya menggunakan cookie tersebut di halaman utama.
@@ -263,7 +290,15 @@ def show_main_page(request):
 
 ## `AuthenticationForm` di Django
 
+`AuthenticationForm` adalah template form login bawaan Django.
+
+Kelebihan `AuthenticationForm` adalah mudah untuk digunakan; cukup dengan memanggil `AuthenticationForm` dengan data request yang diterima server. `AuthenticationForm` juga meng-handle login invalid secara otomatis.
+
+Kelemahannya yaitu kurang feksibel dan agak minimalis. Sebagai contoh, form yang dihasilkan tidak mencantumkan petunjuk bagi pengguna yang belum memiliki akun.
+
 ## Autentikasi vs. otorisasi
+
+Autentikasi adalah proses memastikan identitas pengguna (siapakah pengguna itu), sedangkan otorisasi adalah proses memastikan kewenangan pengguna (apa saja yang bisa diakses oleh pengguna itu.)
 
 ## Kelebihan dan kekurangan session dan cookies
 
