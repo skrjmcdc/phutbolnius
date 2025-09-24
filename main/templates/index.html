@@ -1,14 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
 
+{% if is_authenticated %}
+<a href="{% url 'main:logout' %}"><button>Logout</button></a>
+{% else %}
+<a href="{% url 'main:login' %}"><button>Login</button></a>
+<a href="{% url 'main:register' %}"><button>Daftar Akun</button></a>
+{% endif %}
 <h1>Halo Dunia Football Shop</h1>
 
 <p><span class="bold">Nama:</span> {{ name }}</p>
 <p><span class="bold">Kelas:</span> {{ class }}</p>
 
+{% if username %}
 <br/>
 
 <p>Halo, {{ username }}</p>
+
+{% endif %}
 
 <a href="{% url 'main:add_product' %}"><button>+ Tambah Produk</button></a>
 

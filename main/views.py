@@ -19,6 +19,7 @@ def show_main_page(request):
         'class': 'PBP A',
         'products': products,
         'username': request.user.username,
+        'is_authenticated': request.user.is_authenticated
     }
 
     return render(request, "index.html", context)
