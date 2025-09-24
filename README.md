@@ -292,7 +292,7 @@ def show_main_page(request):
 
 `AuthenticationForm` adalah template form login bawaan Django.
 
-Kelebihan `AuthenticationForm` adalah mudah untuk digunakan; cukup dengan memanggil `AuthenticationForm` dengan data request yang diterima server. `AuthenticationForm` juga meng-handle login invalid secara otomatis.
+Kelebihan `AuthenticationForm` adalah mudah untuk digunakan; cukup dengan memanggil `AuthenticationForm` dengan data request yang diterima server. `AuthenticationForm` juga meng-handle login invalid secara otomatis, sehingga pengembang tidak perlu repot-repot membuat display message untuk login invalid.
 
 Kelemahannya yaitu kurang feksibel dan agak minimalis. Sebagai contoh, form yang dihasilkan tidak mencantumkan petunjuk bagi pengguna yang belum memiliki akun.
 
@@ -300,9 +300,21 @@ Kelemahannya yaitu kurang feksibel dan agak minimalis. Sebagai contoh, form yang
 
 Autentikasi adalah proses memastikan identitas pengguna (siapakah pengguna itu), sedangkan otorisasi adalah proses memastikan kewenangan pengguna (apa saja yang bisa diakses oleh pengguna itu.)
 
+Dalam Django, autentikasi ditangani oleh model User yang menyimpan username serta password pengguna. Sedangkan otorisasi ditangani dengan atribut flag dalam User, dan bisa juga dilakukan secara manual oleh aplikasi.
+
 ## Kelebihan dan kekurangan session dan cookies
 
+Kelebihan server-side session dibandingkan cookies adalah relatif lebih aman, karena data hanya disimpan di server dan tidak terlihat oleh pengguna. Selain itu, ukuran maksimum session sangat tinggi; hanya bergantung pada kapasitas server.
+
+Kekurangannya adalah dari segi performa, karena server harus menangani session untuk banyak user sekaligus. Selain itu, data session akan hilang jika server dimatikan.
+
+Kelebihan cookies dibandingkan session adalah performa yang lebih tinggi, karena data hanya disimpan di device pengguna. Selain itu, data bisa tetap ada walaupun server atau device pengguna dimatikan.
+
+Kekurangannya adalah relatif kurang aman, karena data disimpan di browser pengguna sehingga pengguna bebas membacanya dan memodifikasinya. Selain itu, ukuran maksimum suatu cookie terbatas dan jauh lebih kecil dari ukuran maksimum session.
+
 ## Resiko penggunaan cookies
+
+Salah satu resiko potensial dari penggunaan cookies yaitu pencurian dan/atau pemalsuan cookie, yang memungkinkan penyerang untuk berpura-pura menjadi seorang pengguna yang sah. Untuk memitigasi resiko tersebut,
 
 # Tugas 3
 
