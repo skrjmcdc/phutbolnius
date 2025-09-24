@@ -4,6 +4,271 @@
 
 **Link aplikasi:** <https://muhammad-ibaadi-phutbolnius.pbp.cs.ui.ac.id/>
 
+# Tugas 4
+
+## Step-by-step checklist
+
+### Registrasi, login, dan logout
+
+Pertama saya membuat view baru untuk registrasi user.
+
+(File: `main/templates/.html`)
+```html
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Register</title>
+{% endblock meta %}
+
+{% block content %}
+
+<h1>Register</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" name="submit" value="Daftar" />
+</form>
+
+{% endblock content %}
+```
+(File: `main/views.py`)
+```py
+...
+from django.contrib.auth.forms import UserCreationForm
+...
+
+...
+
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('main:show_main_page')
+
+    context = { 'form': form }
+    return render(request, 'register.html', context)
+```
+
+Selanjutnya saya membuat view untuk login.
+
+(File: `main/templates/login.html`)
+```html
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Login</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="login">
+    <h1>Login</h1>
+
+    <form method="POST" action="">
+        {% csrf_token %}
+        <table>
+            {{ form.as_table }}
+            <tr>
+                <td></td>
+                <td><input class="btn login_btn" type="submit" value="Login" /></td>
+            </tr>
+        </table>
+    </form>
+
+    Belum punya akun? <a href="{% url 'main:register' %}">Daftar Akun</a>
+</div>
+
+{% endblock content %}
+```
+(File: `main/views.py`)
+```py
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+
+...
+
+def login_user(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return HttpResponseRedirect(reverse("main:show_main_page"))
+    else:
+        form = AuthenticationForm(request)
+    context = { 'form': form }
+    return render(request, 'login.html', context)
+```
+
+Kemudian saya melakukan routing untuk semua views telah yang saya buat.
+(File: `main/urls.py`)
+```py
+from django.urls import path
+from main.views import \
+        show_main_page, view_product, add_product, \
+        show_xml, show_xml_by_id, show_json, show_json_by_id, \
+        register, login_user, logout_user
+
+app_name = 'main'
+
+urlpatterns = [
+    ...
+    path('register/', register, name='register'),
+    path('login/', login_user, name='login'),
+    path('logout/', logout_user, name='logout'),
+]
+```
+
+### Penghubungan model Product dengan User
+
+Selanjutnya saya menghubungkan model Product dengan User.
+
+Saya menambahkan atribut `user` dalam model Product.
+
+(File: `main/models.py`)
+```py
+...
+from django.contrib.auth.models import User
+
+# Create your models here.
+
+class Product(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+    ...
+    
+```
+
+Perubahan model tersebut mengharuskan saya melakukan migrasi database:
+
+(bash)
+```bash
+python3 manage.py makemigrations
+python3 manage.py migrate
+```
+
+Kemudian saya menambahkan informasi pembuat produk ke dalam model produk saat pengguna men-submit form pembuatan produk.
+
+(File: `main/views.py`)
+```py
+...
+
+def add_product(request):
+
+    form = ProductForm(request.POST or None)
+
+    # Form submission
+    if form.is_valid() and request.method == "POST":
+        product = form.save(commit=False)
+        product.user = request.user
+        product.save()
+        return redirect('main:show_main_page')
+
+    # Form filling out
+    context = {'form': form}
+    return render(request, "add_product.html", context)
+
+...
+```
+
+Terakhir, saya membuat halaman pembuatan produk hanya bisa diakses apabila pengguna telah melakukan login.
+
+(File: `main/views.py`)
+```py
+...
+from django.contrib.auth.decorators import login_required
+...
+
+...
+
+@login_required(login_url='/login')
+def add_product(request):
+    ...
+
+...
+```
+
+Saya juga memodifikasi halaman detail produk agar juga menampilkan nama penjual produk.
+
+### Penggunaan cookies
+
+Kemudian saya meng-implementasi cookie `last_login`.
+
+Saya memodifikasi view login agar menyimpan waktu login dalam cookie `last_login` saat pengguna men-submit form login.
+(File: `main/views.py`)
+```py
+import datetime
+...
+
+```
+```py
+def login_user(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            response = HttpResponseRedirect(reverse("main:show_main_page"))
+            response.set_cookie('last_login', 
+                                datetime.datetime.now()
+                                .strftime("%A, %d %B %Y, %H:%M:%S.%f"))
+            return response
+    else:
+        form = AuthenticationForm(request)
+    context = { 'form': form }
+    return render(request, 'login.html', context)
+```
+
+Kemudian saya menggunakan cookie tersebut di halaman utama.
+
+(File: `main/views.py`)
+```py
+...
+
+def show_main_page(request):
+
+    products = Product.objects.all()
+
+    context = {
+        'name': 'Muhammad Ibaadi Ilmi',
+        'class': 'PBP A',
+        'products': products,
+        'username': request.user.username,
+        'is_authenticated': request.user.is_authenticated,
+        'last_login': request.COOKIES.get('last_login', 'Belum Pernah'),
+    }
+
+    return render(request, "index.html", context)
+
+...
+```
+
+(File: `main/templates/index.html`)
+```html
+...
+
+{% if username %}
+<br/>
+
+<p>Halo, {{ username }}</p>
+<p>Waktu login: {{ last_login }}</p>
+
+{% endif %}
+
+...
+```
+
+## `AuthenticationForm` di Django
+
+## Autentikasi vs. otorisasi
+
+## Kelebihan dan kekurangan session dan cookies
+
+## Resiko penggunaan cookies
+
 # Tugas 3
 
 ## Step-by-step checklist
