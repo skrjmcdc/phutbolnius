@@ -4,6 +4,18 @@
 
 **Link aplikasi:** <https://muhammad-ibaadi-phutbolnius.pbp.cs.ui.ac.id/>
 
+# Tugas 5
+
+## Step-by-step checklist
+
+## Urutan prioritas CSS selector
+
+## Pentingnya *responsive design*
+
+## *Margin*, *border*, dan *padding*
+
+## *Flex box* dan *grid layout*
+
 # Tugas 4
 
 ## Step-by-step checklist
