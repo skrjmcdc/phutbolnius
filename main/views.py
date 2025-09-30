@@ -80,6 +80,13 @@ def edit_product(request, id):
     context = {'form': form}
     return render(request, "edit_product.html", context)
 
+@login_required(login_url='/login')
+def delete_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    if (request.user == product.user):
+        product.delete()
+    return HttpResponseRedirect(reverse('main:show_main_page'))
+
 def show_xml(request):
 
     products = Product.objects.all()

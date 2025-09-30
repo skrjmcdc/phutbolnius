@@ -14,4 +14,8 @@
 
 <p>{{ product.description }}</p>
 
+{% if user.is_authenticated  and product.user == user %}
+<a href="{% url 'main:edit_product' product.pk %}"><button>Edit</button></a>
+{% endif %}
+
 {% endblock content %}
