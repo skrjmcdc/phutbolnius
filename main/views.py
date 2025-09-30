@@ -83,8 +83,9 @@ def edit_product(request, id):
 @login_required(login_url='/login')
 def delete_product(request, id):
     product = get_object_or_404(Product, pk=id)
-    if (request.user == product.user):
-        product.delete()
+    if request.user != product.user:
+        return HttpResponse(status=403)
+    product.delete()
     return HttpResponseRedirect(reverse('main:show_main_page'))
 
 def show_xml(request):

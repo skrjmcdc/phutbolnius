@@ -16,6 +16,7 @@
 
 {% if user.is_authenticated  and product.user == user %}
 <a href="{% url 'main:edit_product' product.pk %}"><button>Edit</button></a>
+<a href="{% url 'main:delete_product' product.pk %}"><button>Hapus</button></a>
 {% endif %}
 
 {% endblock content %}
