@@ -3,18 +3,11 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     {% block meta %} {% endblock meta %}
+    <link rel="stylesheet" href="{% static 'css/global.css' %}" />
 </head>
 <body>
     {% block content %} {% endblock content %}
-<style>
-body {
-    font-family: sans-serif;
-}
-
-span.bold {
-    font-weight: bold;
-}
-</style>
 </body>
 </html>

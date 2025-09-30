@@ -1,0 +1,12 @@
+body {
+    font-family: sans-serif;
+}
+
+span.bold {
+    font-weight: bold;
+}
+
+.btn-danger {
+    color: white;
+    background-color: red;
+}
