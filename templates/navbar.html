@@ -1,0 +1,14 @@
+<nav class="sticky top-0 left-0">
+    <div class="w-full space-x-4 flex items-center justify-items-center text-nowrap bg-white">
+        <div class="w-full">
+            <span class="font-bold">Halo Dunia Football Shop</span>
+        </div>
+        {% if is_authenticated %}
+        <a href="{% url 'main:logout' %}" class="p-4">Logout</a>
+        {% else %}
+        <a href="{% url 'main:login' %}" class="p-4">Login</a>
+        <a href="{% url 'main:register' %}" class="p-4">Daftar Akun</a>
+        {% endif %}
+
+    </div>
+</nav>
