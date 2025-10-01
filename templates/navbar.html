@@ -1,15 +1,40 @@
 <nav class="sticky top-0 left-0">
-    <div class="w-full space-x-4 flex items-center justify-items-center text-nowrap bg-white">
+    <!-- Desktop -->
+    <div class="hidden md:flex w-full space-x-4 items-center justify-items-center text-nowrap bg-white">
         <div class="w-full">
-            <span class="font-bold">Halo Dunia Football Shop</span>
+            <a href="{% url 'main:show_main_page' %}"><span class="font-bold">Halo Dunia Football Shop</span></a>
         </div>
         {% if is_authenticated %}
         <p>Halo, <span class="font-bold">{{ user.username }}</span></p>
-        <a href="{% url 'main:logout' %}" class="p-4">Logout</a>
+        <a href="{% url 'main:logout' %}" class="p-4"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Logout</span></a>
         {% else %}
-        <a href="{% url 'main:login' %}" class="p-4">Login</a>
-        <a href="{% url 'main:register' %}" class="p-4">Daftar Akun</a>
+        <a href="{% url 'main:login' %}" class="p-4"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Login</span></a>
+        <a href="{% url 'main:register' %}" class="p-4"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Daftar Akun</span></a>
         {% endif %}
 
     </div>
+    <!-- Mobile -->
+    <div class="flex md:hidden w-full space-x-4 items-center justify-items-center text-nowrap bg-white">
+        <div class="w-full p-4">
+            <a href="{% url 'main:show_main_page' %}"><span class="font-bold">Halo Dunia Football Shop</span></a>
+        </div>
+        <button class="mobile-menu-button">Menu</button>
+    </div>
+    <div class="mobile-menu hidden md:hidden bg-white flex items-center justify-items-center">
+        {% if is_authenticated %}
+        <p>Halo, <span class="font-bold">{{ user.username }}</span></p>
+        <a href="{% url 'main:logout' %}" class="p-4"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Logout</span></a>
+        {% else %}
+        <a href="{% url 'main:login' %}" class="p-4"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Login</span></a>
+        <a href="{% url 'main:register' %}" class="p-4"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Daftar Akun</span></a>
+        {% endif %}
+    </div>
+    <script>
+            const btn = document.querySelector("button.mobile-menu-button");
+            const menu = document.querySelector(".mobile-menu");
+    
+            btn.addEventListener("click", () => {
+                menu.classList.toggle("hidden");
+            });
+    </script>
 </nav>
