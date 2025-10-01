@@ -7,12 +7,113 @@
 # Tugas 5
 
 ## Step-by-step checklist
+### Edit product dan delete product
+
+Saya meng-implementasi fitur edit produk dan hapus produk.
+
+Untuk fitur hapus produk saya tidak perlu membuat template baru, namun saya perlu membuat template baru untuk fitur edit produk:
+
+(File: `main/templates/edit_product.html` **(file baru)**)
+```html
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Ubah Produk</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+        <tr>
+            <td>
+                <input type="submit" value="Ubah Produk">
+            </td>
+        </tr>
+    </table>
+</form>
+
+{% endblock %}
+```
+
+Kemudian saya membuat view untuk fitur edit produk yang menggunakan template tersebut, dan saya juga membuat view untuk fitur hapus produk:
+
+(File: `main/views.py`)
+```py
+...
+
+@login_required(login_url='/login')
+def edit_product(request, id):
+
+    product = get_object_or_404(Product, pk=id)
+    if request.user.id != product.user.id:
+        return HttpResponse(status=403)
+
+    form = ProductForm(request.POST or None, instance=product)
+
+    # Form submission
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return redirect('main:show_main_page')
+
+    # Form filling out
+    context = {'form': form}
+    return render(request, "edit_product.html", context)
+
+@login_required(login_url='/login')
+def delete_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    if request.user != product.user:
+        return HttpResponse(status=403)
+    product.delete()
+    return HttpResponseRedirect(reverse('main:show_main_page'))
+
+...
+```
+
+Terakhir saya melakukan routing:
+(File: `main/urls.py`)
+```py
+from django.urls import path
+from main.views import show_main_page
+from main.views import view_product, add_product, edit_product, delete_product
+from main.views import show_xml, show_xml_by_id, show_json, show_json_by_id
+from main.views import register, login_user, logout_user
+
+app_name = 'main'
+
+urlpatterns = [
+    ...
+    path('product/<str:id>/edit/', edit_product, name="edit_product"),
+    path('product/<str:id>/delete/', delete_product, name="delete_product"),
+    ...
+]
+```
+
+### *Responsive design*
 
 ## Urutan prioritas CSS selector
 
+Berikut urutan prioritas CSS selector, dari paling tinggi ke paling rendah:
+- Selector id
+- Selector class, attribute, dan pseudo-attribute
+- Selector element (tag) dan pseudo-element
+
 ## Pentingnya *responsive design*
 
+
+
+Contoh aplikasi yang sudah menerapkan *responsive design* yaitu [SCeLE]<https://scele.cs.ui.ac.id>, di mana layout halaman dapat berubah secara otomatis berdasarkan ukuran layar pengguna. Misalnya, jika pengguna mengakses halaman utama SCeLE melalui *mobile*, maka sidebar yang tadinya terletak di kiri dan kanan akan otomatis berpindah ke bawah halaman.
+
+Contoh aplikasi yang belum menerapkan *responsive design* yaitu [SIAK-NG]<https://academic.ui.ac.id>, di mana layout halaman tidak berubah secara otomatis berdasarkan ukuran layar pengguna, sehingga website SIAK-NG terlihat jelek jika diakses melalui *mobile*.
+
 ## *Margin*, *border*, dan *padding*
+
+Box model adalah suatu konsep penting dalam CSS. Box model dapat dipahami sebagai suatu kotak yang melapisi setiap elemen HTML. Box model terdiri dari 4 bagian, yaitu *content*, *padding*, *border*, dan *margin*.
+
+- *Content* yaitu 
+- *Padding* yaitu ruang kosong di sekitar *content*. Padding bersifat transparan.
+- *Border* yaitu pembatats yang melapisi *content* dan *padding*. *Border* dapat diubah penampilannya.
+- *Margin* yaitu ruang kosong di sekitar *border*. *Margin* bersifat transparan.
 
 ## *Flex box* dan *grid layout*
 
