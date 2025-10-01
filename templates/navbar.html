@@ -4,6 +4,7 @@
             <span class="font-bold">Halo Dunia Football Shop</span>
         </div>
         {% if is_authenticated %}
+        <p>Halo, <span class="font-bold">{{ user.username }}</span></p>
         <a href="{% url 'main:logout' %}" class="p-4">Logout</a>
         {% else %}
         <a href="{% url 'main:login' %}" class="p-4">Login</a>

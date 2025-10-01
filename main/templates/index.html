@@ -1,33 +1,35 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1 class="text-gray-500 sm:text-red-500 md:text-yellow-500 lg:text-green-500 xl:text-blue-500">Halo Dunia Football Shop</h1>
-
-<p><span class="bold">Nama:</span> {{ name }}</p>
-<p><span class="bold">Kelas:</span> {{ class }}</p>
-
-{% if username %}
-<br/>
-
-<p>Halo, {{ username }}</p>
-<p>Waktu login: {{ last_login }}</p>
-
-{% endif %}
-
-<a href="{% url 'main:add_product' %}"><button>+ Tambah Produk</button></a>
-
-<hr />
-
-<table>
-{% for product in products %}
-
-<tr>
-    <td><a href="{% url 'main:view_product' product.id %}">
-            <span class="bold">{{ product.name }}</span>
-        </a></td>
-    <td><span class="bold">{{ product.price }}</span></td>
-</tr>
-
-{% endfor %}
-</table>
-
+<div class="text-nowrap">
+    <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-8xl text-center font-bold text-blue-700">Halo Dunia Football Shop</h1>
+    <p class="text-center">Beautiful Game, Beautiful Products</p>
+</div> 
+<div>
+    {% if products %}
+    <div class="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+         {% for product in products %}
+        <div class="bg-white text-overflow">
+            <div class="aspect-square">
+                {% if product.thumbnail %}
+                <a href="{% url 'main:view_product' product.id %}"><img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="w-full h-full object-cover"/></a>
+                {% else %}
+                <div class="bg-black w-full h-full"></div>
+                {% endif %}
+            </div>
+            <h2 class="text-center font-bold text-lg"><a href="{% url 'main:view_product' product.id %}">{{ product.name }}</a></h2>
+            <p>Harga: {{ product.price }}</p>
+            <p>{{ product.description }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center w-full flex-col items-center justify-content-center bg-red-50">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Cow-on_pole%2C_with_antlers.jpeg" class="max-w-64 max-h-64 mx-auto"/>
+        <p>Belum ada produk yang dijual.</p>
+        {% if user.is_authenticated %}
+        <a href=/add_product">Tambah Produk</a>
+        {% endif %}
+        </div>
+    {% endif %}
+</div>
 {% endblock content %}
