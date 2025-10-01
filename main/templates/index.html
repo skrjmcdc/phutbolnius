@@ -16,9 +16,15 @@
                 <div class="bg-black w-full h-full"></div>
                 {% endif %}
             </div>
+            <div class="p-5">
             <h2 class="text-center font-bold text-lg"><a href="{% url 'main:view_product' product.id %}">{{ product.name }}</a></h2>
-            <p>Harga: {{ product.price }}</p>
+            <p><span class="font-bold">Harga:</span> {{ product.price }}</p>
             <p>{{ product.description }}</p>
+            {% if user.is_authenticated  and product.user == user %}
+            <a href="{% url 'main:edit_product' product.pk %}"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Edit</span></a> · 
+            <a href="{% url 'main:delete_product' product.pk %}"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Hapus</span></a>
+            {% endif %}
+            </div>
         </div>
         {% endfor %}
     </div>

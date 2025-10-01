@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<p><a href="{% url 'main:show_main_page' %}">Kembali ke halaman utama</a></p>
+<div class="m-5 flex flex-col md:flex-row">
 
-<h1>{{ product.name }}</h1>
+<div class="w-50%">
+{% if product.thumbnail %}<img src="{{ product.thumbnail}}" class="w-full object-contain" />{% endif %}
+</div>
 
-{% if product.thumbnail %}<img src="{{ product.thumbnail}}" />{% endif %}
-
+<div class="w-50%">
+<h1 class="text-xl font-bold">{{ product.name }}</h1>
 <p><span class="bold">Dijual oleh: </span>{{ seller_name }}</p>
 <p><span class="bold">Kategori: </span>{{ product.get_category_display }}</p>
 
@@ -15,8 +17,10 @@
 <p>{{ product.description }}</p>
 
 {% if user.is_authenticated  and product.user == user %}
-<a href="{% url 'main:edit_product' product.pk %}"><button>Edit</button></a>
-<a href="{% url 'main:delete_product' product.pk %}"><button class="btn-danger">Hapus</button></a>
+<a href="{% url 'main:edit_product' product.pk %}"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Edit</span></a>
+<a href="{% url 'main:delete_product' product.pk %}"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Hapus</span></a>
 {% endif %}
+</div>
 
+</div>
 {% endblock content %}
