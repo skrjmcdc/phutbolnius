@@ -91,6 +91,11 @@ urlpatterns = [
 
 ### *Responsive design*
 
+Untuk mengimplementasikan responsive design saya melakukan hal-hal berikut:
+- Menambah navbar dan memindahkan tombol tambah produk, login, logout, serta sapaan pengguna ke navbar.
+- Menampilkan daftar produk di halaman utama menggunakan *grid*.
+- Mengubah layout halaman detail produk dari horizontal menjadi vertikal apabila pengguna mengakses melalui mobile.
+
 ## Urutan prioritas CSS selector
 
 Berikut urutan prioritas CSS selector, dari paling tinggi ke paling rendah:
@@ -100,7 +105,7 @@ Berikut urutan prioritas CSS selector, dari paling tinggi ke paling rendah:
 
 ## Pentingnya *responsive design*
 
-
+Responsive design penting agar website dapat terlihat bagus di jenis device apapun, terutama karena sejak dasawarsa sebelumnya akses website melalui *mobile* menjadi mayoritas. Selain itu, website yang *responsive* cenderung lebih disukai oleh *search engine*.
 
 Contoh aplikasi yang sudah menerapkan *responsive design* yaitu [SCeLE]<https://scele.cs.ui.ac.id>, di mana layout halaman dapat berubah secara otomatis berdasarkan ukuran layar pengguna. Misalnya, jika pengguna mengakses halaman utama SCeLE melalui *mobile*, maka sidebar yang tadinya terletak di kiri dan kanan akan otomatis berpindah ke bawah halaman.
 
@@ -110,7 +115,7 @@ Contoh aplikasi yang belum menerapkan *responsive design* yaitu [SIAK-NG]<https:
 
 Box model adalah suatu konsep penting dalam CSS. Box model dapat dipahami sebagai suatu kotak yang melapisi setiap elemen HTML. Box model terdiri dari 4 bagian, yaitu *content*, *padding*, *border*, dan *margin*.
 
-- *Content* yaitu 
+- *Content* yaitu isi suatu elemen yang "sebenarnya". Misalnya di elemen `<p>` berupa teks, di elemen `<img>` berupa gambar, dan lain-lain.
 - *Padding* yaitu ruang kosong di sekitar *content*. Padding bersifat transparan.
 - *Border* yaitu pembatats yang melapisi *content* dan *padding*. *Border* dapat diubah penampilannya.
 - *Margin* yaitu ruang kosong di sekitar *border*. *Margin* bersifat transparan.
