@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="{% static 'css/global.css' %}" />
 </head>
 <body class="bg-blue-100">
-    {% block content %} {% endblock content %}
     {% include 'navbar.html' %}
+    {% block content %} {% endblock content %}
     {% include 'modal.html' %}
 </body>
 </html>

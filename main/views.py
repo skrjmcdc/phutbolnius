@@ -9,6 +9,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.utils.html import strip_tags
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 from main.forms import ProductForm
 from main.models import Product
@@ -151,3 +154,27 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:show_main_page'))
     response.delete_cookie('last_login')
     return response
+
+@csrf_exempt
+@require_POST
+def add_product_ajax(request):
+    name = strip_tags(request.POST.get("name"))
+    price = request.POST.get("price")
+    description = strip_tags(request.POST.get("description"))
+    thumbnail = request.POST.get("thumbnail")
+    category = request.POST.get("category")
+    is_featured = request.POST.get("is_featured") == 'on'  # checkbox handling
+    user = request.user
+
+    product = Product(
+        name=name,
+        price=price,
+        description=description,
+        thumbnail=thumbnail,
+        category=category,
+        is_featured=is_featured,
+        user=user
+    )
+    product.save()
+
+    return HttpResponse(b"CREATED", status=201)
