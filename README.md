@@ -229,13 +229,162 @@ async function addProduct() {
 </script>
 ```
 
+### Me-render informasi produk dengan JavaScript
+Kemudian saya mengubah pe-renderan product card yang tadinya menggunakan fitur render Django menjadi menggunakan JavaScript.
+
+(File: main/templates/index.html)
+```html
+...
+<script>
+
+// Configs
+let CURRENT_USER_ID = "{{ user.id | default_if_none:'' }}";
+
+const NULL_ID = "00000000-0000-0000-0000-000000000000";
+const PRODUCT_API_ENDPOINT = "{% url 'main:show_json' %}";
+const VIEW_PRODUCT_URL = "{% url 'main:view_product' '00000000-0000-0000-0000-000000000000' %}";
+const EDIT_PRODUCT_URL = "{% url 'main:edit_product' '00000000-0000-0000-0000-000000000000' %}";
+const DELETE_PRODUCT_URL = "{% url 'main:delete_product' '00000000-0000-0000-0000-000000000000' %}";
+
+// DOM Elements
+const productGrid = document.getElementById('product-grid');
+
+// State Variables
+let products = [];
+
+function buildProductCard(product) {
+
+    const article = document.createElement('article');
+    article.className = 'bg-white text-overflow';
+
+    const linkDetail = VIEW_PRODUCT_URL.replace(NULL_ID, product.id);
+
+    const productImageHtml = product.thumbnail
+        ? `<a href="${linkDetail}"><img src="${product.thumbnail}" alt="${product.name}" class="w-full h-full object-cover"/></a>`
+        : `<div class="bg-black w-full h-full"></div>`
+
+    let cardHtml = `
+        <div class="aspect-square">
+            ${productImageHtml}
+        </div>
+        <div class="p-5">
+        <h2 class="text-center font-bold text-lg"><a href="${linkDetail}">${product.name}</a></h2>
+        <p><span class="font-bold">Harga:</span> ${product.price}</p>
+        <p>${product.description}</p>
+        </div>
+    `;
+
+    if (CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id)) {
+        const linkEdit = EDIT_PRODUCT_URL.replace(NULL_ID, product.id);
+        const linkDelete = DELETE_PRODUCT_URL.replace(NULL_ID, product.id);
+        cardHtml += `
+            <a href="${linkEdit}"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Edit</span></a> · 
+            <a href="${linkDelete}"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Hapus</span></a>
+        `;
+    }
+
+    article.innerHTML = cardHtml;
+    return article;
+
+}
+
+function renderAllCards(products) {
+
+    productGrid.innerHTML = '';
+    products.forEach(product => {
+        const cardElement = buildProductCard(product);
+        productGrid.appendChild(cardElement);
+    });
+
+}
+
+async function fetchAllProducts() {
+    try {
+
+        const response = await fetch(PRODUCT_API_ENDPOINT, {
+            headers: { 'Accept': 'application/json' },
+        });
+
+        if (!response.ok) {
+            throw new Error('Gagal mem-fetch data produk dari server');
+        }
+
+        const productData = await response.json();
+        products = productData || [];
+
+    } catch (error) {
+
+        console.error('Error saat memuat produk: ' + error);
+        throw error;
+
+    }
+}
+
+function fetchAllAndRender() {
+
+    fetchAllProducts().then(
+        function(value) { renderAllCards(products) },
+        function(error) {}
+    );
+
+}
+
+function init() {
+    fetchAllAndRender();
+}
+
+window.onload = init;
+</script>
+...
+```
+
+### Refresh otomatis saat pengguna menambahkan produk dengan AJAX
+
+(File: main/templates/index.html)
+```html
+...
+<script>
+document.addEventListener('productadded', function() {
+    fetchAllAndRender();
+});
+</script>
+...
+```
+
+(File: templates/modal.html)
+```html
+...
+<script>
+async function addProduct() {
+    ...
+    document.dispatchEvent(new CustomEvent('productadded'));
+    ...
+}
+</script>
+```
+
+### Tombol refresh
+
+Berikut implementasi tombol refresh:
+
+(File: main/templates/index.html)
+```html
+...
+<button onclick="fetchAllAndRender()">Refresh</button>
+...
+```
 ## Synchronous request vs. asynchronous request
+Perbedaannya yaitu dalam synchronous request, program akan menunggu sampai mendapatkan response, sedangkan dalam asynchronous request, program tidak menunggu response.
 
 ## Mekanisme AJAX di Django
+Saat browser memerlukan data tambahan dari server, browser akan mengirim request HTTP ke server, baik melalui **XMLHttpRequest** maupun **API fetch**. Setelah request sampai di server, Django akan melakukan routing seperti request HTTP lainnya melalui file **urls.py**. Kemudian server akan mengirimkan response ke browser.
 
 ## Keuntungan menggunakan AJAX dibandingkan render biasa di Django
+Keuntungannya yaitu AJAX bersifat dynamic sehingga kita bisa mendeteksi perubahan state di server, sedangkan render di Django bersifat static sehingga tidak dapat mendeteksi perubahan state di server.
 
 ## Pengaruh AJAX terhadap UX
+
+Dengan menggunakan AJAX, pengguna tidak perlu me-refresh seluruh halaman setiap ada perubahan kecil; pengguna tinggal menunggu browser selesai memproses response dari server dan merubah halaman seperlunya. Hal ini tentunya akan membuat pengguna lebih nyaman.
 
 # Tugas 5
 
