@@ -8,26 +8,8 @@
 </div> 
 <div>
     {% if products %}
-    <div class="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-         {% for product in products %}
-        <div class="bg-white text-overflow">
-            <div class="aspect-square">
-                {% if product.thumbnail %}
-                <a href="{% url 'main:view_product' product.id %}"><img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="w-full h-full object-cover"/></a>
-                {% else %}
-                <div class="bg-black w-full h-full"></div>
-                {% endif %}
-            </div>
-            <div class="p-5">
-            <h2 class="text-center font-bold text-lg"><a href="{% url 'main:view_product' product.id %}">{{ product.name }}</a></h2>
-            <p><span class="font-bold">Harga:</span> {{ product.price }}</p>
-            <p>{{ product.description }}</p>
-            {% if user.is_authenticated  and product.user == user %}
-            <a href="{% url 'main:edit_product' product.pk %}"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Edit</span></a> · 
-            <a href="{% url 'main:delete_product' product.pk %}"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Hapus</span></a>
-            {% endif %}
-            </div>
-        </div>
+    <div id="product-grid" class="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {% for product in products %}
         {% endfor %}
     </div>
     {% else %}
@@ -40,4 +22,99 @@
         </div>
     {% endif %}
 </div>
+<script>
+
+// Configs
+let CURRENT_USER_ID = "{{ user.id | default_if_none:'' }}";
+
+const NULL_ID = "00000000-0000-0000-0000-000000000000";
+const PRODUCT_API_ENDPOINT = "{% url 'main:show_json' %}";
+const VIEW_PRODUCT_URL = "{% url 'main:view_product' '00000000-0000-0000-0000-000000000000' %}";
+const EDIT_PRODUCT_URL = "{% url 'main:edit_product' '00000000-0000-0000-0000-000000000000' %}";
+const DELETE_PRODUCT_URL = "{% url 'main:delete_product' '00000000-0000-0000-0000-000000000000' %}";
+
+// DOM Elements
+const productGrid = document.getElementById('product-grid');
+
+// State Variables
+let products = [];
+
+function buildProductCard(product) {
+
+    const article = document.createElement('article');
+    article.className = 'bg-white text-overflow';
+
+    const linkDetail = VIEW_PRODUCT_URL.replace(NULL_ID, product.id);
+
+    const productImageHtml = product.thumbnail
+        ? `<a href="${linkDetail}"><img src="${product.thumbnail}" alt="${product.name}" class="w-full h-full object-cover"/></a>`
+        : `<div class="bg-black w-full h-full"></div>`
+
+    let cardHtml = `
+        <div class="aspect-square">
+            ${productImageHtml}
+        </div>
+        <div class="p-5">
+        <h2 class="text-center font-bold text-lg"><a href="${linkDetail}">${product.name}</a></h2>
+        <p><span class="font-bold">Harga:</span> ${product.price}</p>
+        <p>${product.description}</p>
+        </div>
+    `;
+
+    if (CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id)) {
+        const linkEdit = EDIT_PRODUCT_URL.replace(NULL_ID, product.id);
+        const linkDelete = DELETE_PRODUCT_URL.replace(NULL_ID, product.id);
+        cardHtml += `
+            <a href="${linkEdit}"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Edit</span></a> · 
+            <a href="${linkDelete}"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Hapus</span></a>
+        `;
+    }
+
+    article.innerHTML = cardHtml;
+    return article;
+
+}
+
+function renderAllCards(products) {
+
+    productGrid.innerHTML = '';
+    products.forEach(product => {
+        const cardElement = buildProductCard(product);
+        productGrid.appendChild(cardElement);
+    });
+
+}
+
+async function fetchAllProducts() {
+    try {
+
+        const response = await fetch(PRODUCT_API_ENDPOINT, {
+            headers: { 'Accept': 'application/json' },
+        });
+
+        if (!response.ok) {
+            throw new Error('Gagal mem-fetch data produk dari server');
+        }
+
+        const productData = await response.json();
+        products = productData || [];
+
+    } catch (error) {
+
+        console.error('Error saat memuat produk: ' + error);
+        throw error;
+
+    }
+}
+
+function init() {
+
+    fetchAllProducts().then(
+        function(value) { renderAllCards(products) },
+        function(error) {}
+    );
+}
+
+window.onload = init;
+</script>
 {% endblock content %}

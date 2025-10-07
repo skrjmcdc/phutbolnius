@@ -2,7 +2,7 @@ import datetime
 import locale
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core import serializers
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -109,17 +109,41 @@ def show_xml_by_id(request, product_id):
 def show_json(request):
 
     products = Product.objects.all()
-    json_data = serializers.serialize("json", products)
-    return HttpResponse(json_data, content_type="application/json")
+    data = [
+        {
+            'id': str(product.id),
+            'name': product.name,
+            'price': product.price,
+            'description': product.description,
+            'thumbnail': product.thumbnail,
+            'category': product.category,
+            'is_featured': product.is_featured,
+            'user_id': product.user_id,
+        }
+        for product in products
+    ]
+
+    return JsonResponse(data, safe=False)
 
 def show_json_by_id(request, product_id):
 
     try:
-        product = Product.objects.get(pk=product_id)
-        json_data = serializers.serialize("json", [product])
-        return HttpResponse(json_data, content_type="application/json")
+
+        product = Product.objects.select_related('user').get(pk=id)
+        data = {
+            'id': str(product.id),
+            'name': product.name,
+            'price': product.price,
+            'description': product.description,
+            'thumbnail': product.thumbnail,
+            'category': product.category,
+            'is_featured': product.is_featured,
+            'user_id': product.user_id,
+        }
+        return JsonResponse(data)
+
     except Product.DoesNotExist:
-        return HttpResponse(status=404)
+        return JsonRepsonse({'detail': 'Not found'}, status=404)
 
 def register(request):
     form = UserCreationForm()
