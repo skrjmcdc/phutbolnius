@@ -4,6 +4,239 @@
 
 **Link aplikasi:** <https://muhammad-ibaadi-phutbolnius.pbp.cs.ui.ac.id/>
 
+# Tugas 6
+
+## Step-by-step-checklist
+### Modal untuk menambahkan produk dengan AJAX
+
+Pertama saya membuat template untuk modal:
+
+(File: templates/modal.html **(file baru)**)
+```html
+{% load static %}
+<div id="this-is-a-modal" class="hidden fixed inset-0 z-50 w-full flex flex-col items-center justify-center bg-black bg-opacity-50">
+    {% include 'modal_add_product.html' %}
+</div>
+```
+```html
+<script>
+"use strict";
+
+const modal = document.getElementById('this-is-a-modal');
+
+function showModal() {
+    modal.classList.remove('hidden');
+}
+
+function hideModal() {
+    modal.classList.add('hidden');
+}
+
+async function addProduct() {
+
+    await fetch("{% url 'main:add_product_ajax' %}", {
+        method: "POST",
+        body: new FormData(document.getElementById('product-form')),
+    });
+
+    document.getElementById("product-form").reset();
+    hideModal();
+
+    return false;
+
+}
+
+document.getElementById("product-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    addProduct();
+})
+
+</script>
+```
+
+(File: templates/modal\_add\_product.html **(file baru)**)
+```html
+<div id="modal-add-product" class="bg-white w-5/6">
+    <!-- Modal header -->
+    <div>
+        <h1 class="font-bold">Tambah Produk</h1>
+    </div>
+    <!-- Modal body -->
+    <div>
+        <form id="product-form">
+            <label for="name" class="block">Nama Produk</label>
+            <input type="text" id="name" name="name" maxLength=255 placeholder="Masukkan nama produk" required />
+            <label for="price" class="block">Harga</label>
+            <input type="text" id="price" name="price" min="0" required />
+            <label for="description" class="block">Deskripsi Produk</label>
+            <textarea id="description" name="description" placeholder="Masukkan deskripsi produk" required></textarea>
+            <label for="category" class="block">Kategori</label>
+            <select id="category" name="category" required>
+                <option value="">Pilih kategori produk</option>
+                <option value="consumable">Konsumsi</option>
+                <option value="equipment">Perlengkapan</option>
+                <option value="tool">Alat</option>
+                <option value="treasure">Barang Berharga</option>
+                <option value="misc">Lain-Lain</option>
+            </select>
+            <label for="thumbnail" class="block">URL Gambar</label>
+            <input type="url" id="thumbnail" name="thumbnail" placeholder="https://example.com/image.jpg" />
+            <input type="checkbox" id="is-featured" name="is-featured" />
+            <label for="is_featured" class="block">Produk Unggulan</label>
+        </form>
+    </div>
+    <!-- Modal footer -->
+    <div>
+        <button onclick="hideModal()">Keluar</button>
+        <button type="submit" form="product-form">Tambah Produk</button>
+    </div>
+</div>
+```
+
+Setelah itu saya menambahkan template modal ke template dasar global:
+
+(File: templates/base.html)
+```html
+...
+<body class="bg-blue-100">
+    {% include 'navbar.html' %}
+    {% block content %} {% endblock content %}
+    {% include 'modal.html' %}
+</body>
+...
+```
+
+Kemudian saya mengimplementasikan view yang akan menerima data dari modal:
+
+(File: main/views.py)
+```py
+...
+from django.utils.html import strip_tags
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_post
+```
+```py
+...
+
+@csrf_exempt
+@require_POST
+def add_product_ajax(request):
+    name = strip_tags(request.POST.get("name"))
+    price = request.POST.get("price")
+    description = strip_tags(request.POST.get("description"))
+    thumbnail = request.POST.get("thumbnail")
+    category = request.POST.get("category")
+    is_featured = request.POST.get("is_featured") == 'on'  # checkbox handling
+    user = request.user
+
+    product = Product(
+        name=name,
+        price=price,
+        description=description,
+        thumbnail=thumbnail,
+        category=category,
+        is_featured=is_featured,
+        user=user
+    )
+    product.save()
+
+    return HttpResponse(b"CREATED", status=201)
+```
+
+Terakhir saya melakukan routing:
+
+(File: main/urls.py)
+```py
+...
+from main.views import add_product_ajax
+```
+```py
+...
+
+urlpatterns = [
+    ...
+    path('add-product-ajax', add_product_ajax, name='add_product_ajax'),
+]
+```
+
+### Toast
+Selanjutnya saya mengimplementasikan toast:
+
+(File: templates/toast.html **(file baru)**)
+```html
+{% load static %}
+<div id="toast-box" class="fixed p-2 bottom-5 right-5 opacity-0 z-50 bg-white flex items-center">
+    <div>
+        <h1 class="font-bold" id="toast-title">Loading...</h1>
+        <p id="toast-message">
+            Mohon tunggu sebentar...
+        </p>
+    </div>
+</div>
+<script src="{% static 'js/toast.js' %}"></script>
+```
+
+(File: static/js/toast.js **(file baru)**)
+```js
+"use strict";
+
+function showToast(title, message, type, duration=5000) {
+
+    const toastBox = document.getElementById('toast-box');
+    const toastTitle = document.getElementById('toast-title');
+    const toastMessage = document.getElementById('toast-message');
+
+    if (!toastBox) {
+        return;
+    }
+
+    toastTitle.textContent = title;
+    toastMessage.textContent = message;
+
+    toastBox.classList.remove('opacity-0', 'translate-y-64');
+    toastBox.classList.add('opacity-100', 'translate-y-0');
+
+    setTimeout(() => {
+        toastBox.classList.remove('opacity-100', 'translate-y-0');
+        toastBox.classList.add('opacity-0', 'translate-y-64');
+    }, duration);
+
+}
+```
+
+(File: templates/base.html)
+```html
+...
+<body class="bg-blue-100">
+    ...
+    {% include 'toast.html' %}
+</body>
+...
+```
+
+Kemudian saya memodifikasi modal agar menampilkan toast setelah menambahkan produk:
+
+(File: templates/modal.html)
+```html
+<script>
+...
+async function addProduct() {
+    ...
+    showToast('Berhasil menambahkan produk!', '', null);
+    ...
+}
+...
+</script>
+```
+
+## Synchronous request vs. asynchronous request
+
+## Mekanisme AJAX di Django
+
+## Keuntungan menggunakan AJAX dibandingkan render biasa di Django
+
+## Pengaruh AJAX terhadap UX
+
 # Tugas 5
 
 ## Step-by-step checklist
@@ -114,7 +347,7 @@ Contoh aplikasi yang belum menerapkan *responsive design* yaitu [SIAK-NG]<https:
 ## *Margin*, *border*, dan *padding*
 
 Box model adalah suatu konsep penting dalam CSS. Box model dapat dipahami sebagai suatu kotak yang melapisi setiap elemen HTML. Box model terdiri dari 4 bagian, yaitu *content*, *padding*, *border*, dan *margin*.
-
+ 
 - *Content* yaitu isi suatu elemen yang "sebenarnya". Misalnya di elemen `<p>` berupa teks, di elemen `<img>` berupa gambar, dan lain-lain.
 - *Padding* yaitu ruang kosong di sekitar *content*. Padding bersifat transparan.
 - *Border* yaitu pembatats yang melapisi *content* dan *padding*. *Border* dapat diubah penampilannya.
