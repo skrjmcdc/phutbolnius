@@ -5,6 +5,7 @@
     <p class="text-center">Beautiful Game, Beautiful Products</p>
     <button onclick="showModal()">Tambah Produk dengan AJAX</button>
     <button onclick="showToast('Halo', 'Ini adalah toast', null)">Halo</button>
+    <button onclick="fetchAllAndRender()">Refresh</button>
 </div> 
 <div>
     {% if products %}
@@ -105,19 +106,21 @@ async function fetchAllProducts() {
     }
 }
 
-function init() {
+function fetchAllAndRender() {
 
     fetchAllProducts().then(
         function(value) { renderAllCards(products) },
         function(error) {}
     );
+
+}
+
+function init() {
+    fetchAllAndRender();
 }
 
 document.addEventListener('productadded', function() {
-    fetchAllProducts().then(
-        function(value) { renderAllCards(products) },
-        function(error) {}
-    );
+    fetchAllAndRender();
 });
 
 window.onload = init;
