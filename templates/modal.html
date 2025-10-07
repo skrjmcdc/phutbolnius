@@ -27,6 +27,8 @@ async function addProduct() {
 
     showToast('Berhasil menambahkan produk!', '', null);
 
+    document.dispatchEvent(new CustomEvent('productadded'));
+
     return false;
 
 }

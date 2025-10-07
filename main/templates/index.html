@@ -9,8 +9,6 @@
 <div>
     {% if products %}
     <div id="product-grid" class="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {% for product in products %}
-        {% endfor %}
     </div>
     {% else %}
     <div class="text-center w-full flex-col items-center justify-content-center bg-red-50">
@@ -114,6 +112,13 @@ function init() {
         function(error) {}
     );
 }
+
+document.addEventListener('productadded', function() {
+    fetchAllProducts().then(
+        function(value) { renderAllCards(products) },
+        function(error) {}
+    );
+});
 
 window.onload = init;
 </script>
