@@ -1,26 +1,130 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="m-5 flex flex-col md:flex-row">
+<!-- Ready State -->
+<div id="ready-state" class="hidden m-5 flex flex-col md:flex-row">
 
-<div class="w-50%">
-{% if product.thumbnail %}<img src="{{ product.thumbnail}}" class="w-full object-contain" />{% endif %}
+    <div class="w-50%">
+    {% if product.thumbnail %}<img src="{{ product.thumbnail}}" class="w-full object-contain" />{% endif %}
+    </div>
+
+    <div class="w-50%">
+    <h1 id="product-name" class="text-xl font-bold"></h1>
+    <p id="seller-name"><span class="bold">Dijual oleh: </span></p>
+    <p id="product-category"><span class="bold">Kategori: </span></p>
+
+    <p id="product-price"><span class="bold">Harga: </span></p>
+
+    <p id="product-description"></p>
+
+    {% if user.is_authenticated  and product.user == user %}
+    <a href="{% url 'main:edit_product' product.pk %}"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Edit</span></a>
+    <button onclick="modalDeleteProduct.show({ productId: '{{ product.id }}', productName: '{{ product.name}}' })"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Hapus</span></a>
+    {% endif %}
+    </div>
 </div>
 
-<div class="w-50%">
-<h1 class="text-xl font-bold">{{ product.name }}</h1>
-<p><span class="bold">Dijual oleh: </span>{{ seller_name }}</p>
-<p><span class="bold">Kategori: </span>{{ product.get_category_display }}</p>
-
-<p><span class="bold">Harga: </span>{{ product.price }}</p>
-
-<p>{{ product.description }}</p>
-
-{% if user.is_authenticated  and product.user == user %}
-<a href="{% url 'main:edit_product' product.pk %}"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Edit</span></a>
-<button onclick="modalDeleteProduct.show({ productId: '{{ product.id }}', productName: '{{ product.name}}' })"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Hapus</span></a>
-{% endif %}
+<!-- Error State -->
+<div id="error-state" class="hidden w-full h-full flex flex-col items-center">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Cow-on_pole%2C_with_antlers.jpeg" class="w-1/2 object-contain"></img>
+    <p>Oh tidak</p>
 </div>
 
+<!-- Loading State -->
+<div id="loading-state" class="w-full h-full">
+    <p>Loading...</p>
 </div>
+
+<script>
+
+const PRODUCT_ID = "{{ product.id }}";
+const VIEW_PRODUCT_ENDPOINT = `{% url 'main:show_json_by_id' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', PRODUCT_ID);
+
+const productName = document.getElementById('product-name');
+const sellerName = document.getElementById('seller-name');
+const productCategory = document.getElementById('product-category');
+const productPrice = document.getElementById('product-price');
+const productDescription = document.getElementById('product-description');
+
+function PageState(divId) {
+
+    this.div = document.getElementById(divId);
+
+    this.show = function() {
+        states.forEach(s => {
+            s.hide();
+        })
+        this.div.classList.remove('hidden');
+    }
+
+    this.hide = function() {
+        this.div.classList.add('hidden');
+    }
+
+}
+
+const loadingState = new PageState('loading-state');
+const errorState = new PageState('error-state');
+const readyState = new PageState('ready-state');
+
+const states = [
+    loadingState,
+    errorState,
+    readyState,
+]
+
+function getCategoryLabel(categoryCode) {
+    const categoryMapping = {
+        consumable: 'Konsumsi',
+        equipment: 'Perlengkapan',
+        tool: 'Alat',
+        treasure: 'Barang Berharga',
+        misc: 'Lain-Lain',
+    };
+    return categoryMapping[categoryCode] || categoryCode;
+}
+
+function renderProductInfo(product) {
+
+    productName.textContent = product.name;
+    sellerName.innerHTML += product.seller_name;
+    productCategory.innerHTML += getCategoryLabel(product.category);
+    productPrice.innerHTML += product.price;
+    productDescription.textContent = product.description;
+
+    readyState.show();
+
+}
+
+async function loadProductData() {
+
+    try {
+        const response = await fetch(VIEW_PRODUCT_ENDPOINT, {
+            headers: { 'Accept': 'application/json' },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch news detail');
+        }
+
+        const productData = await response.json();
+        return productData;
+
+    } catch (error) {
+
+        console.error('Error loading news detail:', error);
+        throw error;
+
+    }
+
+}
+
+loadingState.show();
+loadProductData().then(
+    product => { renderProductInfo(product); },
+    error => { errorState.show(); }
+)
+
+</script>
+
 {% endblock content %}

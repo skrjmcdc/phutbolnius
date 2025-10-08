@@ -139,6 +139,7 @@ def show_json_by_id(request, product_id):
             'category': product.category,
             'is_featured': product.is_featured,
             'user_id': product.user_id,
+            'seller_name': product.user.username or "Halo Dunia Football Shop",
         }
         return JsonResponse(data)
 
