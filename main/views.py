@@ -202,3 +202,12 @@ def add_product_ajax(request):
     product.save()
 
     return HttpResponse(b"CREATED", status=201)
+
+@csrf_exempt
+def delete_product_ajax(request, id):
+    product = get_object_or_404(Product, pk=id)
+    if request.user != product.user:
+        return HttpResponse(status=403)
+    product.delete()
+    return HttpResponse(status=200)
+

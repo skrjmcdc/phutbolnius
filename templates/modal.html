@@ -1,41 +1,52 @@
 {% load static %}
 <div id="this-is-a-modal" class="hidden fixed inset-0 z-50 w-full flex flex-col items-center justify-center bg-black bg-opacity-50">
     {% include 'modal_add_product.html' %}
+    {% include 'modal_delete_product.html' %}
 </div>
 <script>
 "use strict";
 
-const modal = document.getElementById('this-is-a-modal');
+const modalContainer = document.getElementById('this-is-a-modal');
 
-function showModal() {
-    modal.classList.remove('hidden');
+function Modal(id) {
+
+    this.div = document.getElementById(id);
+
+    this.show = function(context={}) {
+        modals.forEach(modal => {
+            modal.hide();
+        });
+        this.div.classList.remove('hidden');
+        modalContainer.classList.remove('hidden');
+        this.prepareModal(context);
+    }
+
+    this.prepareModal = function(context) {
+        // Overridden by instances
+    }
+
+    this.hide = function() {
+        this.div.classList.add('hidden');
+    }
+
 }
+
+const modalAddProduct = new Modal('modal-add-product');
+const modalDeleteProduct = new Modal('modal-delete-product');
+
+modalDeleteProduct.prepareModal = function(context) {
+    document.getElementById('modal-delete-product-confirmation-message').textContent = `Apakah Anda yakin ingin menghapus produk ${context.productName}?`;
+    document.getElementById('modal-delete-product-delete-button').addEventListener('click', e => {
+        deleteProduct(context.productId);
+    });
+};
+
+const modals = [
+    modalAddProduct,
+    modalDeleteProduct,
+];
 
 function hideModal() {
-    modal.classList.add('hidden');
+    modalContainer.classList.add('hidden');
 }
-
-async function addProduct() {
-
-    await fetch("{% url 'main:add_product_ajax' %}", {
-        method: "POST",
-        body: new FormData(document.getElementById('product-form')),
-    });
-
-    document.getElementById("product-form").reset();
-    hideModal();
-
-    showToast('Berhasil menambahkan produk!', '', null);
-
-    document.dispatchEvent(new CustomEvent('productadded'));
-
-    return false;
-
-}
-
-document.getElementById("product-form").addEventListener("submit", function(e) {
-    e.preventDefault();
-    addProduct();
-})
-
 </script>

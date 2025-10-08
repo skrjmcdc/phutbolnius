@@ -4,6 +4,7 @@ from main.views import view_product, add_product, edit_product, delete_product
 from main.views import show_xml, show_xml_by_id, show_json, show_json_by_id
 from main.views import register, login_user, logout_user
 from main.views import add_product_ajax
+from main.views import delete_product_ajax
 
 app_name = 'main'
 
@@ -21,4 +22,5 @@ urlpatterns = [
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
     path('add-product-ajax', add_product_ajax, name='add_product_ajax'),
+    path('delete-product-ajax/<str:id>', delete_product_ajax, name='delete_product_ajax'),
 ]

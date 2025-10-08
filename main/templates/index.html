@@ -3,7 +3,7 @@
 <div class="text-nowrap">
     <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-8xl text-center font-bold text-blue-700">Halo Dunia Football Shop</h1>
     <p class="text-center">Beautiful Game, Beautiful Products</p>
-    <button onclick="showModal()">Tambah Produk dengan AJAX</button>
+    <button onclick="modalAddProduct.show()">Tambah Produk dengan AJAX</button>
     <button onclick="showToast('Halo', 'Ini adalah toast', null)">Halo</button>
     <button onclick="fetchAllAndRender()">Refresh</button>
 </div> 
@@ -62,10 +62,11 @@ function buildProductCard(product) {
 
     if (CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id)) {
         const linkEdit = EDIT_PRODUCT_URL.replace(NULL_ID, product.id);
-        const linkDelete = DELETE_PRODUCT_URL.replace(NULL_ID, product.id);
+        const linkDelete =
+            `modalDeleteProduct.show({ productId: '${product.id}', productName: '${product.name}' })`;
         cardHtml += `
             <a href="${linkEdit}"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Edit</span></a> · 
-            <a href="${linkDelete}"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Hapus</span></a>
+            <button onclick="${linkDelete}"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Hapus</span></a>
         `;
     }
 

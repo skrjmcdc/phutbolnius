@@ -33,3 +33,27 @@
         <button type="submit" form="product-form">Tambah Produk</button>
     </div>
 </div>
+<script>
+async function addProduct() {
+
+    await fetch("{% url 'main:add_product_ajax' %}", {
+        method: "POST",
+        body: new FormData(document.getElementById('product-form')),
+    });
+
+    document.getElementById("product-form").reset();
+    hideModal();
+
+    showToast('Berhasil menambahkan produk!', '', null);
+
+    document.dispatchEvent(new CustomEvent('productadded'));
+
+    return false;
+
+}
+
+document.getElementById("product-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    addProduct();
+})
+</script>

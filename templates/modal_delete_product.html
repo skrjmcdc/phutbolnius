@@ -1,0 +1,35 @@
+<div id="modal-delete-product" class="bg-white w-5/6">
+    <!-- Modal header -->
+    <div>
+        <h1 class="font-bold">Hapus Produk?</h1>
+    </div>
+    <!-- Modal body -->
+    <div>
+        <p id="modal-delete-product-confirmation-message"></p>
+    </div>
+    <!-- Modal footer -->
+    <div>
+        <button onclick="hideModal()"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Tidak</span></button>
+        <button id="modal-delete-product-delete-button"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Ya</span></button>
+    </div>
+</div>
+<script>
+
+async function deleteProduct(id) {
+
+    await fetch(`{% url 'main:delete_product_ajax' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', id), {
+        method: "POST",
+        body: new FormData(document.getElementById('product-form')),
+    });
+
+    hideModal();
+
+    showToast('Produk dihapus.', 'Berhasil menghapus produk.', null)
+
+    document.dispatchEvent(new CustomEvent('productadded'));
+
+    return false;
+
+}
+
+</script>
