@@ -129,7 +129,7 @@ def show_json_by_id(request, product_id):
 
     try:
 
-        product = Product.objects.select_related('user').get(pk=id)
+        product = Product.objects.select_related('user').get(pk=product_id)
         data = {
             'id': str(product.id),
             'name': product.name,
