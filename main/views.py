@@ -205,6 +205,21 @@ def add_product_ajax(request):
     return HttpResponse(b"CREATED", status=201)
 
 @csrf_exempt
+@require_POST
+def edit_product_ajax(request, id):
+
+    product = get_object_or_404(Product, pk=id)
+    if request.user.id != product.user.id:
+        return HttpResponse(status=403)
+
+    form = ProductForm(request.POST or None, instance=product)
+
+    # Form submission
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return HttpResponse(status=200)
+
+@csrf_exempt
 def delete_product_ajax(request, id):
     product = get_object_or_404(Product, pk=id)
     if request.user != product.user:

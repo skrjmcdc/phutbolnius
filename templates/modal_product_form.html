@@ -1,0 +1,21 @@
+<form id="{{ formid }}-product-form">
+    <label for="name" class="block">Nama Produk</label>
+    <input type="text" id="{{ formid }}-name" name="name" maxLength=255 placeholder="Masukkan nama produk" required />
+    <label for="price" class="block">Harga</label>
+    <input type="text" id="{{ formid }}-price" name="price" min="0" required />
+    <label for="description" class="block">Deskripsi Produk</label>
+    <textarea id="{{ formid }}-description" name="description" placeholder="Masukkan deskripsi produk" required></textarea>
+    <label for="category" class="block">Kategori</label>
+    <select id="{{ formid }}-category" name="category" required>
+        <option value="">Pilih kategori produk</option>
+        <option value="consumable">Konsumsi</option>
+        <option value="equipment">Perlengkapan</option>
+        <option value="tool">Alat</option>
+        <option value="treasure">Barang Berharga</option>
+        <option value="misc">Lain-Lain</option>
+    </select>
+    <label for="thumbnail" class="block">URL Gambar</label>
+    <input type="url" id="{{ formid }}-thumbnail" name="thumbnail" placeholder="https://example.com/image.jpg" />
+    <input type="checkbox" id="{{ formid }}-is-featured" name="is-featured" />
+    <label for="is_featured" class="block">Produk Unggulan</label>
+</form>

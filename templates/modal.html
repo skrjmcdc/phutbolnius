@@ -1,6 +1,7 @@
 {% load static %}
 <div id="this-is-a-modal" class="hidden fixed inset-0 z-50 w-full flex flex-col items-center justify-center bg-black bg-opacity-50">
     {% include 'modal_add_product.html' %}
+    {% include 'modal_edit_product.html' %}
     {% include 'modal_delete_product.html' %}
 </div>
 <script>
@@ -32,8 +33,13 @@ function Modal(id) {
 }
 
 const modalAddProduct = new Modal('modal-add-product');
-const modalDeleteProduct = new Modal('modal-delete-product');
 
+const modalEditProduct = new Modal('modal-edit-product');
+modalEditProduct.prepareModal = function(context) {
+    productId = context.productId;
+}
+
+const modalDeleteProduct = new Modal('modal-delete-product');
 modalDeleteProduct.prepareModal = function(context) {
     document.getElementById('modal-delete-product-confirmation-message').textContent = `Apakah Anda yakin ingin menghapus produk ${context.productName}?`;
     document.getElementById('modal-delete-product-delete-button').addEventListener('click', e => {
@@ -43,6 +49,7 @@ modalDeleteProduct.prepareModal = function(context) {
 
 const modals = [
     modalAddProduct,
+    modalEditProduct,
     modalDeleteProduct,
 ];
 

@@ -1,0 +1,40 @@
+<div id="modal-edit-product" class="bg-white w-5/6">
+    <!-- Modal header -->
+    <div>
+        <h1 class="font-bold">Tambah Produk</h1>
+    </div>
+    <!-- Modal body -->
+    <div>
+        {% include 'modal_product_form.html' with formid="edit" %}
+    </div>
+    <!-- Modal footer -->
+    <div>
+        <button onclick="hideModal()">Keluar</button>
+        <button type="submit" form="edit-product-form">Simpan Produk</button>
+    </div>
+</div>
+<script>
+let productId = '00000000-0000-0000-0000-000000000000'
+async function editProduct(productId) {
+
+    await fetch("{% url 'main:edit_product_ajax' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', productId), {
+        method: "POST",
+        body: new FormData(document.getElementById('edit-product-form')),
+    });
+
+    document.getElementById("edit-product-form").reset();
+    hideModal();
+
+    showToast('Berhasil meng-edit produk!', '', null);
+
+    document.dispatchEvent(new CustomEvent('productadded'));
+
+    return false;
+
+}
+
+document.getElementById("edit-product-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    editProduct(productId);
+})
+</script>

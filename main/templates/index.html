@@ -61,12 +61,13 @@ function buildProductCard(product) {
     `;
 
     if (CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id)) {
-        const linkEdit = EDIT_PRODUCT_URL.replace(NULL_ID, product.id);
+        const linkEdit =
+            `modalEditProduct.show({ productId: '${product.id}', productName: '${product.name}' })`;
         const linkDelete =
             `modalDeleteProduct.show({ productId: '${product.id}', productName: '${product.name}' })`;
         cardHtml += `
-            <a href="${linkEdit}"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Edit</span></a> · 
-            <button onclick="${linkDelete}"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Hapus</span></a>
+            <button onclick="${linkEdit}"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Edit</span></button>
+            <button onclick="${linkDelete}"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Hapus</span></button>
         `;
     }
 
