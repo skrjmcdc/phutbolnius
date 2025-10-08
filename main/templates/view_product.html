@@ -18,7 +18,7 @@
 
 {% if user.is_authenticated  and product.user == user %}
 <a href="{% url 'main:edit_product' product.pk %}"><span class="text-blue-600 font-bold hover:text-white hover:bg-blue-600">Edit</span></a>
-<a href="{% url 'main:delete_product' product.pk %}"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Hapus</span></a>
+<button onclick="modalDeleteProduct.show({ productId: '{{ product.id }}', productName: '{{ product.name}}' })"><span class="text-red-500 font-bold hover:text-white hover:bg-red-500">Hapus</span></a>
 {% endif %}
 </div>
 
