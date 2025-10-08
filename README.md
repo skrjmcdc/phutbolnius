@@ -374,13 +374,20 @@ Berikut implementasi tombol refresh:
 ...
 ```
 ## Synchronous request vs. asynchronous request
-Perbedaannya yaitu dalam synchronous request, program akan menunggu sampai mendapatkan response, sedangkan dalam asynchronous request, program tidak menunggu response.
+
+Perbedaannya yaitu dalam synchronous request, program akan menunggu sampai mendapatkan response, sedangkan dalam asynchronous request, program tidak menunggu response sehingga bisa menjalankan kode lain sambil menunggu.
 
 ## Mekanisme AJAX di Django
+
 Saat browser memerlukan data tambahan dari server, browser akan mengirim request HTTP ke server, baik melalui **XMLHttpRequest** maupun **API fetch**. Setelah request sampai di server, Django akan melakukan routing seperti request HTTP lainnya melalui file **urls.py**. Kemudian server akan mengirimkan response ke browser.
 
 ## Keuntungan menggunakan AJAX dibandingkan render biasa di Django
+
 Keuntungannya yaitu AJAX bersifat dynamic sehingga kita bisa mendeteksi perubahan state di server, sedangkan render di Django bersifat static sehingga tidak dapat mendeteksi perubahan state di server.
+
+## Keamanan
+
+Untuk memastikan keamanan saat menggunakan AJAX untuk fitur Login dan Register di Django, kita bisa menggunakan template token CSRF Django yang nantinya kita include dalam request AJAX.
 
 ## Pengaruh AJAX terhadap UX
 
