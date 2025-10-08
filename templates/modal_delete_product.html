@@ -19,7 +19,6 @@ async function deleteProduct(id) {
 
     await fetch(`{% url 'main:delete_product_ajax' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', id), {
         method: "POST",
-        body: new FormData(document.getElementById('product-form')),
     });
 
     hideModal();
